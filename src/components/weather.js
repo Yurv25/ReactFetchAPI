@@ -14,6 +14,11 @@ class Weather extends React.Component {
         const data = await response.json();
         console.log(data.main);
         this.setState({ city: data.main, isLoading: false});
+        
+        this.setState({ 
+            //city.temp =  
+            //???
+        })
     }
 
     render() {
