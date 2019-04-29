@@ -3,18 +3,42 @@ import React from "react";
 const multiply = (val,multiplier) => val * multiplier
 
 class Weather extends React.Component {
-  state = {
+  constructor(props){
+    super(props)
+    this.state = {
     isLoading: true,
-    city: null
-  };
+    city: null,
+    value: ''
+    };
+    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleSubmit.bind(this)
+  }
+  
+  handleChange(e){
+      this.setState({ value: e.target.value})
+  }
 
+  handleSubmit(e){
+    const url =
+    "http://api.openweathermap.org/data/2.5/weather?q={this.state.value}&appid=122591ecd157814b65c4bb7e244974f0";
+  const response =  fetch(url);
+
+  const data = response.json();
+
+  data.main.temp = data.main.temp -273.15
+    //const multipliedTemp = multiply(temp, 2)
+    this.setState({ city: data.main, isLoading: false });
+
+  e.preventDefault();
+  }
   async componentDidMount() {
     const url =
       "http://api.openweathermap.org/data/2.5/weather?id=524901&appid=122591ecd157814b65c4bb7e244974f0";
     const response = await fetch(url);
 
     const data = await response.json();
-    console.log(data.main);
+    
+    //console.log(data.main);
     /*
     assigning properties and values in an object does not when accessing a property;
     
@@ -34,13 +58,15 @@ class Weather extends React.Component {
         }
     */
    
-    const temp = data.main.temp
-    const multipliedTemp = multiply(temp, 2)
-    this.setState({ city: data.main, isLoading: false, temp, multipliedTemp });
+    data.main.temp = data.main.temp -273.15
+    //const multipliedTemp = multiply(temp, 2)
+    this.setState({ city: data.main, isLoading: false });
 
 
    
   }
+
+
 
   render() {
     if (this.state.isLoading) {
@@ -55,7 +81,11 @@ class Weather extends React.Component {
     }
     return (
       <div style={{ margin: "10px" }}>
-        <div>{temp}</div>
+        <form onSubmit={this.handleSubmit}>
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          <input type="submit" value="Search"/>
+        </form>
+        <div><p>Temperature : {temp}</p></div>
         <div>{pressure}</div>
         <div>{humidity}</div>
         <div>{temp_min}</div>
