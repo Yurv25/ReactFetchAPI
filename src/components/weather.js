@@ -1,43 +1,45 @@
 import React from "react";
 
-const multiply = (val,multiplier) => val * multiplier
+const multiply = (val, multiplier) => val * multiplier
 
 class Weather extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
+  state = {
     isLoading: true,
     city: null,
     value: ''
-    };
-    this.handleChange = this.handleChange.bind(this)
-    this.handleChange = this.handleSubmit.bind(this)
-  }
-  
-  handleChange(e){
-      this.setState({ value: e.target.value})
+  };
+
+
+  handleChange = (e) => {
+    this.setState({ value: e.target.value })
   }
 
-  handleSubmit(e){
+  handleSubmit = (e) => {
+    e.preventDefault();
     const url =
-    "http://api.openweathermap.org/data/2.5/weather?q={this.state.value}&appid=122591ecd157814b65c4bb7e244974f0";
-  const response =  fetch(url);
+      `http://api.openweathermap.org/data/2.5/weather?q=${this.state.value}&appid=122591ecd157814b65c4bb7e244974f0`;
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        console.log('the response is ', data)
 
-  const data = response.json();
+        data.main.temp = data.main.temp - 273.15
 
-  data.main.temp = data.main.temp -273.15
-    //const multipliedTemp = multiply(temp, 2)
-    this.setState({ city: data.main, isLoading: false });
+        this.setState({ city: data.main, isLoading: false });
 
-  e.preventDefault();
+      }).catch(console.error)
+
+
+    //e.preventDefault();
   }
+
   async componentDidMount() {
     const url =
       "http://api.openweathermap.org/data/2.5/weather?id=524901&appid=122591ecd157814b65c4bb7e244974f0";
     const response = await fetch(url);
 
     const data = await response.json();
-    
+
     //console.log(data.main);
     /*
     assigning properties and values in an object does not when accessing a property;
@@ -57,13 +59,13 @@ class Weather extends React.Component {
             temp
         }
     */
-   
-    data.main.temp = data.main.temp -273.15
+
+    data.main.temp = data.main.temp - 273.15
     //const multipliedTemp = multiply(temp, 2)
     this.setState({ city: data.main, isLoading: false });
 
 
-   
+
   }
 
 
@@ -83,9 +85,9 @@ class Weather extends React.Component {
       <div style={{ margin: "10px" }}>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.value} onChange={this.handleChange} />
-          <input type="submit" value="Search"/>
+          <input type="submit" value="Search" />
         </form>
-        <div><p>Temperature : {temp}</p></div>
+        <div><p>Temperature in {this.state.value} : {temp}</p></div>
         <div>{pressure}</div>
         <div>{humidity}</div>
         <div>{temp_min}</div>
