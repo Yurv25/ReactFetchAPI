@@ -6,7 +6,8 @@ class Weather extends React.Component {
   state = {
     isLoading: true,
     city: null,
-    value: ''
+    value: '',
+    wimage: null
   };
 
 
@@ -23,9 +24,9 @@ class Weather extends React.Component {
       .then(data => {
         console.log('the response is ', data)
 
-        data.main.temp = data.main.temp - 273.15
-
-        this.setState({ city: data.main, isLoading: false });
+        data.main.temp = Math.round(data.main.temp - 273.15);
+        
+        this.setState({ city: data.main, wimage: data.weather, isLoading: false });
 
       }).catch(console.error)
 
@@ -60,10 +61,11 @@ class Weather extends React.Component {
         }
     */
 
-    data.main.temp = data.main.temp - 273.15
+    data.main.temp = Math.round(data.main.temp - 273.15)
     //const multipliedTemp = multiply(temp, 2)
-    this.setState({ city: data.main, isLoading: false });
-
+    console.log(data.weather[0].icon);
+    this.setState({ city: data.main, wimage: data.weather[0], isLoading: false });
+    
 
 
   }
@@ -78,6 +80,8 @@ class Weather extends React.Component {
     // destructure
     const { city } = this.state;
     const { temp, pressure, humidity, temp_min, temp_max } = city;
+    const { wimage } = this.state;
+    const { description, icon} =  wimage;
     if (!this.state.city) {
       return <div> didn't get it </div>;
     }
@@ -87,13 +91,14 @@ class Weather extends React.Component {
           <input type="text" value={this.state.value} onChange={this.handleChange} />
           <input type="submit" value="Search" />
         </form>
-        <div><p>Temperature in {this.state.value} : {temp}</p></div>
+        <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
+        <div><img src={"http://openweathermap.org/img/w/"  + icon }></img></div>
         <div>{pressure}</div>
         <div>{humidity}</div>
         <div>{temp_min}</div>
         <div>{temp_max}</div>
         {/* another way to peak at objects cleanly during dev */}
-        <pre>{JSON.stringify(this.state, null, "\t")}</pre>
+        <div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>
       </div>
     );
   }

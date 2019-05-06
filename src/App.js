@@ -8,8 +8,8 @@ class App extends Component {
   render() {
     
     return (
-        <div>
-          <h1>My first app</h1>
+        <div className="main">
+          <h1>World Temperature</h1>
            <Weather />          
         </div>
     );
