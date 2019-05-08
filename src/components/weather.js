@@ -25,8 +25,10 @@ class Weather extends React.Component {
         console.log('the response is ', data)
 
         data.main.temp = Math.round(data.main.temp - 273.15);
-        
-        this.setState({ city: data.main, wimage: data.weather, isLoading: false });
+        data.main.temp_min = Math.round(data.main.temp_min - 273.15)
+        data.main.temp_max = Math.round(data.main.temp_max - 273.15)
+
+        this.setState({ city: data.main, wimage: data.weather[0], isLoading: false });
 
       }).catch(console.error)
 
@@ -62,6 +64,8 @@ class Weather extends React.Component {
     */
 
     data.main.temp = Math.round(data.main.temp - 273.15)
+    data.main.temp_min = Math.round(data.main.temp_min - 273.15)
+    data.main.temp_max = Math.round(data.main.temp_max - 273.15)
     //const multipliedTemp = multiply(temp, 2)
     console.log(data.weather[0].icon);
     this.setState({ city: data.main, wimage: data.weather[0], isLoading: false });
@@ -80,8 +84,8 @@ class Weather extends React.Component {
     // destructure
     const { city } = this.state;
     const { temp, pressure, humidity, temp_min, temp_max } = city;
-    const { wimage } = this.state;
-    const { description, icon} =  wimage;
+    //const { wimage } = this.state;
+    //const { description, icon} =  wimage[0];
     if (!this.state.city) {
       return <div> didn't get it </div>;
     }
@@ -92,11 +96,11 @@ class Weather extends React.Component {
           <input type="submit" value="Search" />
         </form>
         <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
-        <div><img src={"http://openweathermap.org/img/w/"  + icon }></img></div>
+        <div><img src={"http://openweathermap.org/img/w/"  + this.state.wimage.icon  + ".png"}></img></div>
         <div>{pressure}</div>
         <div>{humidity}</div>
-        <div>{temp_min}</div>
-        <div>{temp_max}</div>
+        <div>Minimum temperature: {temp_min}</div>
+        <div>Maximum temperature: {temp_max}</div>
         {/* another way to peak at objects cleanly during dev */}
         <div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>
       </div>
