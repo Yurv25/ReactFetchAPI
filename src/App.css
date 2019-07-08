@@ -36,7 +36,7 @@
   padding-right: 50px;
   margin-left: 60px;
   text-align: center;
-  background-color: darkblue;
+  background-color: rgba(0, 88, 139, 0.089);
 } 
 .main .test{
 text-align : left;
@@ -45,9 +45,10 @@ padding-right: 500px;
 }
 
 .srch{
-    position: relative;
+    margin: auto;
     display: block;
-    width: 20px;
+    width: 150px;
     height: 20px;
-    cursor: pointer;
+    
+    border: 2px solid;
 }

@@ -7,7 +7,7 @@ class Weather extends React.Component {
     isLoading: true,
     city: null,
     value: '',
-    wimage: null
+    weather: null
   };
 
 
@@ -28,7 +28,7 @@ class Weather extends React.Component {
         data.main.temp_min = Math.round(data.main.temp_min - 273.15)
         data.main.temp_max = Math.round(data.main.temp_max - 273.15)
 
-        this.setState({ city: data.main, wimage: data.weather[0], isLoading: false });
+        this.setState({ city: data.main, weather: data.weather[0], isLoading: false });
 
       }).catch(console.error)
 
@@ -37,8 +37,10 @@ class Weather extends React.Component {
   }
 
   async componentDidMount() {
+    
+    const apikey= "122591ecd157814b65c4bb7e244974f0";
     const url =
-      "http://api.openweathermap.org/data/2.5/weather?id=524901&appid=122591ecd157814b65c4bb7e244974f0";
+      `http://api.openweathermap.org/data/2.5/weather?q=Toronto,Canada&appid=${apikey}`;
     const response = await fetch(url);
 
     const data = await response.json();
@@ -68,7 +70,7 @@ class Weather extends React.Component {
     data.main.temp_max = Math.round(data.main.temp_max - 273.15)
     //const multipliedTemp = multiply(temp, 2)
     console.log(data.weather[0].icon);
-    this.setState({ city: data.main, wimage: data.weather[0], isLoading: false });
+    this.setState({ city: data.main, weather: data.weather[0], isLoading: false });
     
 
 
@@ -84,25 +86,25 @@ class Weather extends React.Component {
     // destructure
     const { city } = this.state;
     const { temp, pressure, humidity, temp_min, temp_max } = city;
-    //const { wimage } = this.state;
-    //const { description, icon} =  wimage[0];
+    const { weather } = this.state;
+    const { id, main, description, icon} =  weather;
     if (!this.state.city) {
       return <div> didn't get it </div>;
     }
     return (
       <div style={{ margin: "10px" }}>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          <label> City: <input type="text" value={this.state.value} onChange={this.handleChange} className="srch"/> </label>
           <input type="submit" value="Search" />
         </form>
         <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
-        <div><img src={"http://openweathermap.org/img/w/"  + this.state.wimage.icon  + ".png"}></img></div>
-        <div>{pressure}</div>
-        <div>{humidity}</div>
-        <div>Minimum temperature: {temp_min}</div>
-        <div>Maximum temperature: {temp_max}</div>
+        <div><img src={"http://openweathermap.org/img/w/"  + icon  + ".png"} alt="Weather"></img></div>
+        <div><p>Humidity: {humidity}</p></div>
+        <div><p>Minimum temperature: {temp_min}</p></div>
+        <div><p>Maximum temperature: {temp_max}</p></div>
+        <div><p>Description: {description}</p></div>
         {/* another way to peak at objects cleanly during dev */}
-        <div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>
+        {/*<div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>*/}
       </div>
     );
   }
