@@ -5,10 +5,15 @@ const apikey = "122591ecd157814b65c4bb7e244974f0";
 class Weather extends React.Component {
   state = {
     isLoading: true,
+    temp: undefined,
     city: null,
     country: null,
-    value: '',
-    weather: null
+    humidity: null,
+    description: null,
+    icon: null,
+    min: undefined,
+    max: undefined,
+    value: ''
   };
 
 
@@ -20,7 +25,7 @@ class Weather extends React.Component {
     const ctr = e.target.elements.country.value;
     e.preventDefault();
     const url =
-      `http://api.openweathermap.org/data/2.5/weather?q=${this.state.value},${ctr}&appid=122591ecd157814b65c4bb7e244974f0`;
+      `http://api.openweathermap.org/data/2.5/weather?q=${this.state.value},${ctr}&appid=${apikey}`;
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -30,7 +35,7 @@ class Weather extends React.Component {
         data.main.temp_min = Math.round(data.main.temp_min - 273.15)
         data.main.temp_max = Math.round(data.main.temp_max - 273.15)
 
-        this.setState({ city: data.main, country: ctr, weather: data.weather[0], isLoading: false });
+        this.setState({temp: data.main.temp, city: data.name, country: ctr, humidity: data.main.humidity,  description: data.weather[0].description, min: data.main.temp_min,max: data.main.temp_max, isLoading: false });
 
       }).catch(console.error)
 
@@ -66,16 +71,24 @@ class Weather extends React.Component {
             temp
         }
     */
-
+    
     data.main.temp = Math.round(data.main.temp - 273.15)
     data.main.temp_min = Math.round(data.main.temp_min - 273.15)
     data.main.temp_max = Math.round(data.main.temp_max - 273.15)
     //const multipliedTemp = multiply(temp, 2)
-    console.log(data.weather[0].icon);
-    this.setState({ city: data.main, weather: data.weather[0], isLoading: false });
+    console.log(data.main.temp);
+    this.setState({ 
+      isLoading: false, 
+      temp: data.main.temp, 
+      city: "Toronto", 
+      country: "Canada", 
+      humidity: data.main.humidity, 
+      description: data.weather[0].description, 
+      icon: data.weather[0].icon, 
+      min: data.main.temp_min,
+      max: data.main.temp_max 
+       });
     
-
-
   }
 
 
@@ -86,10 +99,12 @@ class Weather extends React.Component {
     }
 
     // destructure
-    const { city } = this.state;
-    const { temp, pressure, humidity, temp_min, temp_max } = city;
-    const { weather } = this.state;
-    const { id, main, description, icon} =  weather;
+    //const { city } = this.state;
+    //const { temp, pressure, humidity, temp_min, temp_max } = city;
+    const {Fullweather} = this.state;
+    const { temp,city,country, humidity,description, icon, min, max } = Fullweather;
+    //const { weather } = this.state;
+    //const { id, main, description, icon} =  weather;
     if (!this.state.city) {
       return <div> didn't get it </div>;
     }
@@ -101,10 +116,11 @@ class Weather extends React.Component {
           <input type="submit" value="Search" />
         </form>
         <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
+        <div><p>Country {country}</p></div>
         <div><img src={"http://openweathermap.org/img/w/"  + icon  + ".png"} alt="Weather"></img></div>
         <div><p>Humidity: {humidity}</p></div>
-        <div><p>Minimum temperature: {temp_min}</p></div>
-        <div><p>Maximum temperature: {temp_max}</p></div>
+        <div><p>Minimum temperature: {min}</p></div>
+        <div><p>Maximum temperature: {max}</p></div>
         <div><p>Description: {description}</p></div>
         {/* another way to peak at objects cleanly during dev */}
         {/*<div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>*/}
