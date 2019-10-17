@@ -1,11 +1,12 @@
 import React from "react";
 
 const multiply = (val, multiplier) => val * multiplier
-
+const apikey = "122591ecd157814b65c4bb7e244974f0";
 class Weather extends React.Component {
   state = {
     isLoading: true,
     city: null,
+    country: null,
     value: '',
     weather: null
   };
@@ -16,9 +17,10 @@ class Weather extends React.Component {
   }
 
   handleSubmit = (e) => {
+    const ctr = e.target.elements.country.value;
     e.preventDefault();
     const url =
-      `http://api.openweathermap.org/data/2.5/weather?q=${this.state.value}&appid=122591ecd157814b65c4bb7e244974f0`;
+      `http://api.openweathermap.org/data/2.5/weather?q=${this.state.value},${ctr}&appid=122591ecd157814b65c4bb7e244974f0`;
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -28,7 +30,7 @@ class Weather extends React.Component {
         data.main.temp_min = Math.round(data.main.temp_min - 273.15)
         data.main.temp_max = Math.round(data.main.temp_max - 273.15)
 
-        this.setState({ city: data.main, weather: data.weather[0], isLoading: false });
+        this.setState({ city: data.main, country: ctr, weather: data.weather[0], isLoading: false });
 
       }).catch(console.error)
 
@@ -38,7 +40,7 @@ class Weather extends React.Component {
 
   async componentDidMount() {
     
-    const apikey= "122591ecd157814b65c4bb7e244974f0";
+    //const apikey= "122591ecd157814b65c4bb7e244974f0";
     const url =
       `http://api.openweathermap.org/data/2.5/weather?q=Toronto,Canada&appid=${apikey}`;
     const response = await fetch(url);
@@ -94,7 +96,8 @@ class Weather extends React.Component {
     return (
       <div style={{ margin: "10px" }}>
         <form onSubmit={this.handleSubmit}>
-          <label> City: <input type="text" value={this.state.value} onChange={this.handleChange} className="srch"/> </label>
+          <label> City: <input type="text" name="city" value={this.state.value} onChange={this.handleChange} className="srch"/> </label>
+          <label><input type ="text" name="country" placeholder="Country..."/></label>
           <input type="submit" value="Search" />
         </form>
         <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
