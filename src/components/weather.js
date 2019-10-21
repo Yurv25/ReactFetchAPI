@@ -5,14 +5,14 @@ const apikey = "122591ecd157814b65c4bb7e244974f0";
 class Weather extends React.Component {
   state = {
     isLoading: true,
-    temp: undefined,
+    temp: 0,
     city: null,
     country: null,
     humidity: null,
     description: null,
     icon: null,
-    min: undefined,
-    max: undefined,
+    min: 0,
+    max: 0,
     value: ''
   };
 
@@ -29,13 +29,11 @@ class Weather extends React.Component {
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        console.log('the response is ', data)
-
         data.main.temp = Math.round(data.main.temp - 273.15);
         data.main.temp_min = Math.round(data.main.temp_min - 273.15)
         data.main.temp_max = Math.round(data.main.temp_max - 273.15)
 
-        this.setState({temp: data.main.temp, city: data.name, country: ctr, humidity: data.main.humidity,  description: data.weather[0].description, min: data.main.temp_min,max: data.main.temp_max, isLoading: false });
+        this.setState({temp: data.main.temp, city: data.name, country: ctr, humidity: data.main.humidity,  description: data.weather[0].description, icon: data.weather[0].icon, min: data.main.temp_min,max: data.main.temp_max, isLoading: false });
 
       }).catch(console.error)
 
@@ -51,6 +49,8 @@ class Weather extends React.Component {
     const response = await fetch(url);
 
     const data = await response.json();
+
+    // console.log(data)
 
     //console.log(data.main);
     /*
@@ -76,7 +76,7 @@ class Weather extends React.Component {
     data.main.temp_min = Math.round(data.main.temp_min - 273.15)
     data.main.temp_max = Math.round(data.main.temp_max - 273.15)
     //const multipliedTemp = multiply(temp, 2)
-    console.log(data.main.temp);
+    // console.log(data.main.temp);
     this.setState({ 
       isLoading: false, 
       temp: data.main.temp, 
@@ -94,34 +94,28 @@ class Weather extends React.Component {
 
 
   render() {
-    if (this.state.isLoading) {
+    const { isLoading, temp, city, country, humidity, description, icon, min, max } = this.state;
+
+    // const { temp, city, country, humidity, description, icon, min, max } = Fullweather;
+    if (isLoading && isLoading) {
       return <div>loading...</div>;
     }
-
-    // destructure
-    //const { city } = this.state;
-    //const { temp, pressure, humidity, temp_min, temp_max } = city;
-    const {Fullweather} = this.state;
-    const { temp,city,country, humidity,description, icon, min, max } = Fullweather;
-    //const { weather } = this.state;
-    //const { id, main, description, icon} =  weather;
-    if (!this.state.city) {
-      return <div> didn't get it </div>;
-    }
-    return (
+    console.log(icon);
+    return(
       <div style={{ margin: "10px" }}>
         <form onSubmit={this.handleSubmit}>
-          <label> City: <input type="text" name="city" value={this.state.value} onChange={this.handleChange} className="srch"/> </label>
+          <label><input type="text" name="city" placeholder="City..."value={this.state.value} onChange={this.handleChange} /> </label>
           <label><input type ="text" name="country" placeholder="Country..."/></label>
           <input type="submit" value="Search" />
         </form>
-        <div><p>Temperature in {this.state.value} : {temp} Celsius</p></div>
-        <div><p>Country {country}</p></div>
-        <div><img src={"http://openweathermap.org/img/w/"  + icon  + ".png"} alt="Weather"></img></div>
-        <div><p>Humidity: {humidity}</p></div>
-        <div><p>Minimum temperature: {min}</p></div>
-        <div><p>Maximum temperature: {max}</p></div>
-        <div><p>Description: {description}</p></div>
+        <div><p className="weather__key">Temperature in {this.state.value} : <span className="weather__value">{temp && temp} Celsius</span></p></div>
+        <div><p>Country: <span className="weather__value">{country}</span></p></div>
+        <div><img src={"http://openweathermap.org/img/w/"  + icon  + ".png"} alt="Weather"></img></div> 
+        
+        <div><p>Humidity: <span className="weather__value">{humidity}</span></p></div>
+        <div><p>Minimum temperature: <span className="weather__value">{min}</span></p></div>
+        <div><p>Maximum temperature: <span className="weather__value">{max}</span></p></div>
+        <div><p>Conditions: <span className="weather__value">{description}</span></p></div>
         {/* another way to peak at objects cleanly during dev */}
         {/*<div><pre className="test">{JSON.stringify(this.state, null, "\t")}</pre></div>*/}
       </div>
